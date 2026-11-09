@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>칭찬 표현 말하기 녹음</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Gowun+Dodum&display=swap">
+<style>
+/* 레이아웃: 한 줄 세로 흐름, 단계 3개(듣기 → 연습 → 녹음·제출). 교과서 대화 상자 느낌의 분홍 말풍선 */
+:root{
+  --bg:#fbf7f6; --surface:#ffffff; --ink:#2b2426; --muted:#76696c; --line:#ecdfe0;
+  --accent:#d9536b; --accent-soft:#fbe3e6; --b-soft:#eef1f7; --b-ink:#4a5d86;
+  --ok:#2f8a5b; --warn:#d23a3a;
+  --f-jp:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  --f-ko:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1c1819; --surface:#262022; --ink:#f3ecec; --muted:#b3a5a8; --line:#3a3134;
+  --accent:#f07b90; --accent-soft:#3d2429; --b-soft:#232a38; --b-ink:#a9bbe2;
+  --ok:#5cc28d; --warn:#ff6b6b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1c1819; --surface:#262022; --ink:#f3ecec; --muted:#b3a5a8; --line:#3a3134;
+  --accent:#f07b90; --accent-soft:#3d2429; --b-soft:#232a38; --b-ink:#a9bbe2;
+  --ok:#5cc28d; --warn:#ff6b6b; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ko);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:calc(20px + env(safe-area-inset-top,0px)) calc(40px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--accent);font-weight:700}
+h1{font-family:var(--f-jp);font-weight:800;font-size:1.7rem;line-height:1.3;margin:0;text-wrap:balance}
+.lead{margin:0;color:var(--muted)}
+section{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:16px}
+.step{display:flex;align-items:center;gap:10px}
+.step b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--f-jp);font-size:1rem;flex:none}
+h2{margin:0;font-size:1.2rem;text-wrap:balance}
+h3{margin:0;font-size:1.05rem}
+.hint{margin:0;color:var(--muted);font-size:.95rem}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{appearance:none;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit}
+.card svg{width:34px;height:34px;color:var(--muted)}
+.card .jp{font-family:var(--f-jp);font-weight:700;font-size:1.35rem}
+.card .ko{font-size:.85rem;color:var(--muted)}
+.card[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.card[aria-pressed="true"] svg{color:var(--accent)}
+
+.dialog{display:flex;flex-direction:column;gap:10px}
+.line{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;border-radius:14px;padding:10px 12px;background:var(--accent-soft);transition:box-shadow .2s}
+.line.b{background:var(--b-soft)}
+.line.speaking{box-shadow:0 0 0 3px var(--accent)}
+.who{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--surface);font-weight:700;font-family:var(--f-jp)}
+.txt{min-width:0}
+.jpline{font-family:var(--f-jp);font-weight:500;font-size:1.3rem;line-height:1.5}
+.jpline .sub{color:var(--accent);font-weight:800}
+.koline{font-size:.9rem;color:var(--muted)}
+.pron{font-size:.9rem;color:var(--b-ink)}
+.line.hide-jp .jpline{filter:blur(7px);user-select:none}
+.ibtn{appearance:none;border:none;background:var(--surface);color:var(--ink);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.ibtn svg{width:20px;height:20px}
+
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{appearance:none;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.95rem;padding:9px 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:700}
+button:focus-visible,input:focus-visible{outline:3px solid var(--b-ink);outline-offset:2px}
+.tip{border-left:4px solid var(--accent);background:var(--bg);padding:10px 14px;border-radius:0 10px 10px 0;font-size:.95rem}
+.tip strong{color:var(--accent)}
+.notice{font-size:.9rem;color:var(--warn)}
+
+.script{list-style:none;margin:0;padding:14px 16px;border-radius:14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.script li{display:grid;grid-template-columns:28px 1fr;gap:8px;font-family:var(--f-jp);font-size:1.15rem}
+.script li span:first-child{color:var(--muted);font-family:var(--f-ko);font-size:.9rem;padding-top:4px}
+.script .gap{height:6px}
+.status{font-size:.95rem;color:var(--muted)}
+.checks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.checks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.checks input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--accent)}
+.done{color:var(--ok);font-weight:700}
+.how{margin:0}
+@media (max-width:520px){.jpline{font-size:1.15rem}h1{font-size:1.45rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">일본어 · 읽기와 말하기</span>
+  <h1>칭찬하는 표현 말하기</h1>
+  <p class="lead">듣고 따라 말한 뒤, 직접 녹음한 파일을 제출합니다.</p>
+</header>
+
+<section aria-labelledby="s1">
+  <div class="step"><b>1</b><h2 id="s1">그림 단어를 바꿔 가며 듣고 따라 말하기</h2></div>
+  <p class="hint">단어를 고르면 A의 문장이 바뀝니다. ▶를 눌러 한 줄씩 듣고, 소리 내어 따라 말해 보세요.</p>
+
+  <div class="cards" role="group" aria-label="바꿔 넣을 단어">
+    <button class="card" data-i="0" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h11a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H9l-4 3v-3H4z"/><path d="M8 10h6M8 13h4"/></svg>
+      <span class="jp">にほんご</span><span class="ko">일본어</span>
+    </button>
+    <button class="card" data-i="1" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+      <span class="jp">うた</span><span class="ko">노래</span>
+    </button>
+    <button class="card" data-i="2" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="13" rx="1"/><path d="M4 13l4-4 4 4 3-3 5 5M8 16l-2 5M16 16l2 5"/></svg>
+      <span class="jp">え</span><span class="ko">그림</span>
+    </button>
+  </div>
+
+  <div class="dialog">
+    <div class="line a" id="lineA">
+      <span class="who">A</span>
+      <div class="txt">
+        <div class="jpline"><span class="sub" id="subWord">にほんご</span>が じょうずですね。</div>
+        <div class="koline" id="koA">일본어를 잘하시네요.</div>
+        <div class="pron" id="prA" hidden>니혼고가 죠-즈데스네.</div>
+      </div>
+      <button class="ibtn" data-say="A" aria-label="A 문장 듣기"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+    </div>
+    <div class="line b" id="lineB">
+      <span class="who">B</span>
+      <div class="txt">
+        <div class="jpline">いいえ、そんな こと ありませんよ。</div>
+        <div class="koline">아니에요, 그렇지 않아요.</div>
+        <div class="pron" hidden>이-에, 손나 코토 아리마셍요.</div>
+      </div>
+      <button class="ibtn" data-say="B" aria-label="B 문장 듣기"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="btn primary" id="playPair">▶ 대화 듣기</button>
+    <button class="btn" id="playAll">▶ 세 대화 모두 듣기</button>
+    <button class="btn" id="slow" aria-pressed="false">천천히</button>
+    <button class="btn" id="pronBtn" aria-pressed="false">한글 발음 보기</button>
+  </div>
+  <p class="notice" id="ttsNote" hidden>이 기기에서는 일본어 음성이 나오지 않아요. 선생님이 들려주는 교과서 음원으로 들어 주세요.</p>
+
+  <div class="tip"><strong>발음 포인트</strong> じょうず는 <b>「じょー」</b>로 길게 끌어 주세요. 문장 끝 <b>ね</b>는 살짝 올리며 상대에게 맞장구를 구하는 느낌, <b>よ</b>는 부드럽게 내려 줍니다.</div>
+</section>
+
+<section aria-labelledby="s2">
+  <div class="step"><b>2</b><h2 id="s2">가리고 혼자 말해 보기</h2></div>
+  <p class="hint">일본어 문장을 흐리게 가려 두고 한국어 뜻만 보며 말해 보세요. 세 단어 모두 막힘없이 말할 수 있으면 녹음으로 넘어갑니다.</p>
+  <div class="row">
+    <button class="btn" id="hideA" aria-pressed="false">A 문장 가리기</button>
+    <button class="btn" id="hideB" aria-pressed="false">B 문장 가리기</button>
+  </div>
+</section>
+
+<section aria-labelledby="s3">
+  <div class="step"><b>3</b><h2 id="s3">녹음하고 파일 제출하기</h2></div>
+  <p class="hint">태블릿의 <b>음성 녹음</b> 앱을 열고, 아래 대본을 처음부터 끝까지 <b>A와 B 모두</b> 혼자 읽어 녹음합니다.</p>
+  <ol class="script" id="script"></ol>
+
+  <h3>제출 전 확인</h3>
+  <ul class="checks">
+    <li><label><input type="checkbox" class="ck" id="ck1">にほんご · うた · え 세 대화를 모두 녹음했다</label></li>
+    <li><label><input type="checkbox" class="ck" id="ck2">じょうず를 「じょー」로 길게 발음했다</label></li>
+    <li><label><input type="checkbox" class="ck" id="ck3">다시 들어 보고 목소리가 잘 들리는지 확인했다</label></li>
+  </ul>
+  <p class="status" id="checkMsg" aria-live="polite"></p>
+
+  <h3>제출 방법</h3>
+  <p class="how">패들렛에서 <b>내 이름 칸</b>의 ＋를 누르고 녹음 파일을 올립니다.</p>
+</section>
+
+</div>
+
+<script>
+const WORDS=[
+  {jp:"にほんご",ko:"일본어를",pr:"니혼고가"},
+  {jp:"うた",ko:"노래를",pr:"우타가"},
+  {jp:"え",ko:"그림을",pr:"에가"}
+];
+const B_JP="いいえ、そんな こと ありませんよ。";
+let cur=0,rate=1;
+const $=s=>document.querySelector(s);
+
+(function(){
+  const ol=$("#script");
+  WORDS.forEach((w,i)=>{
+    if(i) ol.insertAdjacentHTML("beforeend",'<li class="gap" aria-hidden="true"></li>');
+    ol.insertAdjacentHTML("beforeend",`<li><span>A</span><span>${w.jp}が じょうずですね。</span></li><li><span>B</span><span>${B_JP}</span></li>`);
+  });
+})();
+
+function setWord(i){
+  cur=i;
+  document.querySelectorAll(".card").forEach(c=>c.setAttribute("aria-pressed",c.dataset.i==i));
+  $("#subWord").textContent=WORDS[i].jp;
+  $("#koA").textContent=WORDS[i].ko+" 잘하시네요.";
+  $("#prA").textContent=WORDS[i].pr+" 죠-즈데스네.";
+}
+document.querySelectorAll(".card").forEach(c=>c.addEventListener("click",()=>{setWord(+c.dataset.i);speakSeq([["A",cur]])}));
+
+const synth=window.speechSynthesis;
+let jaVoice=null;
+function pickVoice(){
+  if(!synth)return;
+  const v=synth.getVoices();
+  jaVoice=v.find(x=>/ja[-_]JP/i.test(x.lang))||v.find(x=>/^ja/i.test(x.lang))||null;
+}
+if(synth){pickVoice();synth.onvoiceschanged=pickVoice}else{$("#ttsNote").hidden=false}
+
+function textOf(role,i){return role==="A"?WORDS[i].jp+"が じょうずですね。":B_JP}
+function clearHi(){document.querySelectorAll(".line").forEach(l=>l.classList.remove("speaking"))}
+function speakSeq(seq){
+  if(!synth){$("#ttsNote").hidden=false;return}
+  synth.cancel(); clearHi();
+  seq.forEach(([role,i],k)=>{
+    const u=new SpeechSynthesisUtterance(textOf(role,i));
+    u.lang="ja-JP"; if(jaVoice)u.voice=jaVoice;
+    u.rate=rate*0.9; u.pitch=role==="A"?1.15:0.9;
+    u.onstart=()=>{ if(role==="A")setWord(i); clearHi(); $(role==="A"?"#lineA":"#lineB").classList.add("speaking")};
+    u.onend=()=>{ if(k===seq.length-1)clearHi() };
+    synth.speak(u);
+  });
+  setTimeout(()=>{ if(!jaVoice&&synth.getVoices().length)$("#ttsNote").hidden=false },1500);
+}
+document.querySelectorAll("[data-say]").forEach(b=>b.addEventListener("click",()=>speakSeq([[b.dataset.say,cur]])));
+$("#playPair").onclick=()=>speakSeq([["A",cur],["B",cur]]);
+$("#playAll").onclick=()=>speakSeq([0,1,2].flatMap(i=>[["A",i],["B",i]]));
+function toggle(btn,fn){btn.onclick=()=>{const on=btn.getAttribute("aria-pressed")!=="true";btn.setAttribute("aria-pressed",on);fn(on)}}
+toggle($("#slow"),on=>rate=on?0.7:1);
+toggle($("#pronBtn"),on=>document.querySelectorAll(".pron").forEach(p=>p.hidden=!on));
+toggle($("#hideA"),on=>$("#lineA").classList.toggle("hide-jp",on));
+toggle($("#hideB"),on=>$("#lineB").classList.toggle("hide-jp",on));
+
+document.querySelectorAll(".ck").forEach(c=>c.addEventListener("change",()=>{
+  const all=[...document.querySelectorAll(".ck")].every(x=>x.checked);
+  $("#checkMsg").innerHTML=all?'<span class="done">준비 완료! 제출해 주세요.</span>':"";
+}));
+</script>
+</body>
+</html>
